@@ -1,0 +1,22 @@
+{
+  "name": "Analytics Module",
+  "version": "1.0.0",
+  "description": "Advanced analytics and reporting module for QR Menu System",
+  "author": "QR Menu Team",
+  "type": "addon",
+  "dependencies": [],
+  "hooks": {
+    "after_order_created": "analytics_after_order_created",
+    "daily_report": "analytics_generate_daily_report",
+    "admin_dashboard_widgets": "analytics_dashboard_widgets"
+  },
+  "permissions": [
+    "view_analytics",
+    "export_reports"
+  ],
+  "settings": {
+    "enable_real_time": true,
+    "data_retention_days": 365,
+    "enable_export": true
+  }
+}

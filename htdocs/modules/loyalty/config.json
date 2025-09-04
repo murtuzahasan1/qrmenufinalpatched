@@ -1,0 +1,25 @@
+{
+  "name": "Loyalty Program Module",
+  "version": "1.0.0",
+  "description": "Customer loyalty program with points and rewards",
+  "author": "QR Menu Team",
+  "type": "addon",
+  "dependencies": [],
+  "hooks": {
+    "after_order_created": "loyalty_after_order_created",
+    "customer_registration": "loyalty_customer_registration",
+    "admin_customer_view": "loyalty_customer_info"
+  },
+  "permissions": [
+    "manage_loyalty_program",
+    "view_loyalty_points",
+    "manage_rewards"
+  ],
+  "settings": {
+    "points_per_currency": 1,
+    "redemption_rate": 100,
+    "welcome_bonus": 50,
+    "referral_bonus": 25,
+    "enable_tier_system": true
+  }
+}

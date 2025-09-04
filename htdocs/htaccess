@@ -1,0 +1,32 @@
+ # ##############################################################################
+# # QR Menu System .htaccess file (Corrected Final Version)                    #
+# ##############################################################################
+DirectoryIndex index.html
+
+# Prevent Directory Listing
+Options -Indexes
+
+# --- Security: Deny access to sensitive files ---
+<FilesMatch "\.(sqlite|log|json)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Enable URL rewriting
+RewriteEngine On
+RewriteBase /
+
+# --- Main Routing Rules ---
+
+# 1. If the request is for a real file or directory, serve it directly
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# 2. Route API calls to their respective handlers, passing the rest of the URL
+#    as a query string. This is the line that has been fixed.
+RewriteRule ^api/([a-zA-Z0-9_]+)/?(.*)$ /api/$1/index.php?endpoint=$2&action=$2 [L,QSA]
+
+
+# 3. For all other requests, serve the main index.html file
+RewriteRule . /index.html [L

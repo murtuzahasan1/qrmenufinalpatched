@@ -1,0 +1,1 @@
+user_id|i:1;user_email|s:16:"admin@qrmenu.com";user_name|s:11:"Super Admin";user_role|s:11:"super_admin";user_permissions|a:1:{i:0;s:3:"all";}restaurant_id|N;branch_id|N;last_activity|i:1756913303;

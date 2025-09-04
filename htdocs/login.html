@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Menu System - Login</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-form">
+            <h2>QR Menu System</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <div style="margin-top: 1rem; text-align: center;">
+                <a href="#" style="color: #667eea; text-decoration: none;">Forgot Password?</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/auth-redirect.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const submitBtn = loginForm.querySelector('.btn');
+                
+                // Show loading
+                Utils.showLoading(submitBtn);
+                
+                try {
+                    const result = await APIService.login(email, password);
+                    
+                    if (result.success) {
+                        // Use AuthRedirect to handle login success and redirection
+                        await AuthRedirect.handleLoginSuccess(result.user);
+                    } else {
+                        Utils.showToast(result.message, 'error');
+                    }
+                } catch (error) {
+                    Utils.showToast('Login failed. Please try again.', 'error');
+                } finally {
+                    Utils.hideLoading(submitBtn, 'Login');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

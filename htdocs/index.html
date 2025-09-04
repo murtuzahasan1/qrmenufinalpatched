@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Menu - Digital Restaurant Menu</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <style>
+        /* Additional styles for customer-facing menu */
+        .menu-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .menu-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .menu-hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .restaurant-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin: 0 auto;
+            max-width: 600px;
+        }
+
+        .restaurant-info h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .restaurant-info .details {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .restaurant-info .detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-container {
+            background: white;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 1rem 3rem 1rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-box button {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .menu-categories {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+            overflow-x: auto;
+            padding: 0 1rem;
+        }
+
+        .category-tab {
+            background: white;
+            border: 2px solid #e5e7eb;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .category-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+
+        .menu-item-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .menu-item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .menu-item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f3f4f6;
+        }
+
+        .menu-item-content {
+            padding: 1.5rem;
+        }
+
+        .menu-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-item-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e293b;
+            flex: 1;
+        }
+
+        .menu-item-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #059669;
+        }
+
+        .menu-item-description {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .menu-item-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .tag.vegetarian {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .tag.vegan {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .tag.gluten-free {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .tag.spicy {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .cart-sidebar {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .cart-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .cart-item-price {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .quantity-btn {
+            background: #f3f4f6;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(5, 150, 105, 0.3);
+        }
+
+        .cart-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .cart-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1001;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .close-btn:hover {
+            color: #374151;
+        }
+
+        @media (max-width: 768px) {
+            .menu-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .restaurant-info .details {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .cart-toggle {
+                bottom: 1rem;
+                right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu Hero Section -->
+    <section class="menu-hero">
+        <div class="container">
+            <h1 id="restaurantName">Loading Restaurant...</h1>
+            <p id="restaurantDescription">Digital Menu Experience</p>
+            <div class="restaurant-info">
+                <h2 id="branchName">Loading Branch...</h2>
+                <div class="details">
+                    <div class="detail">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                        </svg>
+                        <span id="branchPhone">Loading...</span>
+                    </div>
+                    <div class="detail">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                        <span id="branchAddress">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search menu items..." onkeyup="searchMenu()">
+            <button onclick="searchMenu()">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+            </button>
+        </div>
+    </section>
+
+    <!-- Menu Categories -->
+    <section class="menu-categories" id="categoryTabs">
+        <!-- Categories will be populated by JavaScript -->
+    </section>
+
+    <!-- Menu Items -->
+    <section class="menu-grid" id="menuGrid">
+        <!-- Menu items will be populated by JavaScript -->
+    </section>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <button class="close-btn" onclick="toggleCart()">&times;</button>
+        </div>
+        <div class="cart-content" id="cartContent">
+            <p style="text-align: center; color: #6b7280;">Your cart is empty</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">৳0.00</span>
+            </div>
+            <button class="checkout-btn" onclick="openCheckout()">Checkout</button>
+        </div>
+    </div>
+
+    <!-- Cart Toggle Button -->
+    <button class="cart-toggle" onclick="toggleCart()">
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+        </svg>
+        <span class="cart-count" id="cartCount" style="display: none;">0</span>
+    </button>
+
+    <!-- Checkout Modal -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Checkout</h3>
+                <button class="close-btn" onclick="closeCheckout()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="checkoutForm">
+                    <div class="form-group">
+                        <label for="customerName">Your Name</label>
+                        <input type="text" id="customerName" name="customer_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Phone Number</label>
+                        <input type="tel" id="customerPhone" name="customer_phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerEmail">Email (Optional)</label>
+                        <input type="email" id="customerEmail" name="customer_email">
+                    </div>
+                    <div class="form-group">
+                        <label for="tableNumber">Table Number (Optional)</label>
+                        <input type="text" id="tableNumber" name="table_number">
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentMethod">Payment Method</label>
+                        <select id="paymentMethod" name="payment_method" required>
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="mobile">Mobile Banking</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="orderNotes">Special Instructions (Optional)</label>
+                        <textarea id="orderNotes" name="notes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCheckout()">Cancel</button>
+                <button class="btn btn-primary" onclick="placeOrder()">Place Order</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="assets/js/app.js"></script>
+    <script>
+        let restaurantData = null;
+        let menuData = null;
+        let branches = []; // <-- FIX #1: Declare the branches variable here
+        let cart = [];
+        let currentCategory = null;
+
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const restaurantId = urlParams.get('restaurant_id');
+        const branchId = urlParams.get('branch_id');
+        const qrData = urlParams.get('qr');
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Parse QR data if provided
+                if (qrData) {
+                    const parsedData = JSON.parse(atob(qrData));
+                    if (parsedData.restaurant_id) {
+                        await loadMenu(parsedData.restaurant_id, parsedData.branch_id);
+                    }
+                } else if (restaurantId) {
+                    await loadMenu(restaurantId, branchId);
+                } else {
+                    // Load default restaurant or show restaurant selector
+                    await loadDefaultRestaurant();
+                }
+            } catch (error) {
+                console.error('Failed to initialize menu:', error);
+                showError('Failed to load menu. Please try again.');
+            }
+        });
+
+        async function loadDefaultRestaurant() {
+            try {
+                const result = await APIService.getRestaurants();
+                if (result.success && result.data.length > 0) {
+                    await loadMenu(result.data[0].id);
+                } else {
+                    showError('No restaurants found. Please add a restaurant in the admin panel.');
+                }
+            } catch (error) {
+                console.error('Failed to load restaurants:', error);
+                showError('Failed to load restaurants.');
+            }
+        }
+
+        async function loadMenu(restaurantId, branchId = null) {
+            try {
+                // FIX #2: Fetch both menu and branch data
+                const menuResult = await APIService.getMenu(restaurantId, branchId);
+                const branchesResult = await APIService.getBranches(restaurantId);
+
+                if (menuResult.success) {
+                    restaurantData = menuResult.data.restaurant;
+                    menuData = menuResult.data.menu;
+                    
+                    if (branchesResult.success) {
+                        branches = branchesResult.data; // Populate the global branches variable
+                    }
+                    
+                    updateRestaurantInfo();
+                    updateCategoryTabs();
+                    displayMenuItems();
+                } else {
+                    showError('Failed to load menu.');
+                }
+            } catch (error) {
+                console.error('Failed to load menu:', error);
+                showError('Failed to load menu.');
+            }
+        }
+
+        function updateRestaurantInfo() {
+            document.getElementById('restaurantName').textContent = restaurantData.name;
+            document.getElementById('restaurantDescription').textContent = restaurantData.description || 'Digital Menu Experience';
+            
+            if (restaurantData.branch) {
+                document.getElementById('branchName').textContent = restaurantData.branch.name;
+                document.getElementById('branchPhone').textContent = restaurantData.branch.phone;
+                document.getElementById('branchAddress').textContent = restaurantData.branch.address;
+            } else {
+                 document.getElementById('branchName').textContent = 'All Branches';
+                document.getElementById('branchPhone').textContent = restaurantData.phone;
+                document.getElementById('branchAddress').textContent = restaurantData.address;
+            }
+        }
+
+        function updateCategoryTabs() {
+            const container = document.getElementById('categoryTabs');
+            container.innerHTML = '';
+            
+            const allTab = document.createElement('div');
+            allTab.className = 'category-tab active';
+            allTab.textContent = 'All';
+            allTab.onclick = (event) => filterByCategory(null, event.target);
+            container.appendChild(allTab);
+            
+            menuData.forEach(category => {
+                const tab = document.createElement('div');
+                tab.className = 'category-tab';
+                tab.textContent = category.category.name;
+                tab.onclick = (event) => filterByCategory(category.category.id, event.target);
+                container.appendChild(tab);
+            });
+        }
+
+        function filterByCategory(categoryId, targetElement) {
+            currentCategory = categoryId;
+            
+            document.querySelectorAll('.category-tab').forEach(tab => tab.classList.remove('active'));
+            if(targetElement) {
+                targetElement.classList.add('active');
+            }
+            
+            displayMenuItems();
+        }
+
+        function displayMenuItems() {
+            const container = document.getElementById('menuGrid');
+            container.innerHTML = '';
+            
+            let itemsToShow = [];
+            
+            if (currentCategory === null) {
+                menuData.forEach(category => {
+                    itemsToShow = itemsToShow.concat(category.items);
+                });
+            } else {
+                const category = menuData.find(cat => cat.category.id === currentCategory);
+                if (category) {
+                    itemsToShow = category.items;
+                }
+            }
+            
+            if (itemsToShow.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6b7280; grid-column: 1/-1;">No items found in this category.</p>';
+                return;
+            }
+            
+            itemsToShow.forEach(item => {
+                const itemCard = createMenuItemCard(item);
+                container.appendChild(itemCard);
+            });
+        }
+
+        function createMenuItemCard(item) {
+            const card = document.createElement('div');
+            card.className = 'menu-item-card';
+            
+            const tags = [];
+            if (item.vegetarian == 1) tags.push({ class: 'vegetarian', text: 'Vegetarian' });
+            if (item.vegan == 1) tags.push({ class: 'vegan', text: 'Vegan' });
+            if (item.gluten_free == 1) tags.push({ class: 'gluten-free', text: 'Gluten Free' });
+            if (item.spicy_level > 0) tags.push({ class: 'spicy', text: `Spicy ${'🌶️'.repeat(item.spicy_level)}` });
+            
+            // FIX: Replaced broken placeholder with a reliable one
+            const imageUrl = item.image || `https://placehold.co/300x200/png?text=${encodeURIComponent(item.name)}`;
+
+            card.innerHTML = `
+                <img src="${imageUrl}" alt="${item.name}" class="menu-item-image">
+                <div class="menu-item-content">
+                    <div class="menu-item-header">
+                        <h3 class="menu-item-name">${item.name}</h3>
+                        <div class="menu-item-price">${Utils.formatPrice(item.price)}</div>
+                    </div>
+                    <p class="menu-item-description">${item.description || 'Delicious food item'}</p>
+                    <div class="menu-item-tags">
+                        ${tags.map(tag => `<span class="tag ${tag.class}">${tag.text}</span>`).join('')}
+                    </div>
+                    <button class="add-to-cart" onclick="addToCart(${item.id})">Add to Cart</button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function addToCart(itemId) {
+            const item = findMenuItemById(itemId);
+            if (!item) return;
+            
+            const existingItem = cart.find(cartItem => cartItem.id === itemId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: itemId,
+                    name: item.name,
+                    price: item.price,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+            Utils.showToast(`${item.name} added to cart!`, 'success');
+        }
+
+        function findMenuItemById(itemId) {
+            for (const category of menuData) {
+                const item = category.items.find(item => item.id === itemId);
+                if (item) return item;
+            }
+            return null;
+        }
+
+        function updateCart() {
+            const cartContent = document.getElementById('cartContent');
+            const cartCount = document.getElementById('cartCount');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            if (cart.length === 0) {
+                cartContent.innerHTML = '<p style="text-align: center; color: #6b7280;">Your cart is empty</p>';
+                cartCount.style.display = 'none';
+                cartTotal.textContent = Utils.formatPrice(0);
+                return;
+            }
+            
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            cartCount.style.display = 'flex';
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartTotal.textContent = Utils.formatPrice(total);
+            
+            cartContent.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">${Utils.formatPrice(item.price * item.quantity)}</div>
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateQuantity(itemId, change) {
+            const item = cart.find(cartItem => cartItem.id === itemId);
+            if (!item) return;
+            
+            item.quantity += change;
+            
+            if (item.quantity <= 0) {
+                cart = cart.filter(cartItem => cartItem.id !== itemId);
+            }
+            
+            updateCart();
+        }
+
+        function toggleCart() {
+            document.getElementById('cartSidebar').classList.toggle('open');
+        }
+
+        function openCheckout() {
+            if (cart.length === 0) {
+                Utils.showToast('Your cart is empty!', 'error');
+                return;
+            }
+            document.getElementById('checkoutModal').classList.add('active');
+        }
+
+        function closeCheckout() {
+            document.getElementById('checkoutModal').classList.remove('active');
+        }
+
+        async function placeOrder() {
+            const form = document.getElementById('checkoutForm');
+            const formData = new FormData(form);
+            
+            const orderBranchId = restaurantData.branch ? restaurantData.branch.id : (branches.length > 0 ? branches[0].id : 1);
+
+            const orderData = {
+                restaurant_id: restaurantData.id,
+                branch_id: orderBranchId,
+                items: cart.map(item => ({
+                    menu_item_id: item.id,
+                    quantity: item.quantity
+                })),
+                customer_name: formData.get('customer_name'),
+                customer_phone: formData.get('customer_phone'),
+                customer_email: formData.get('customer_email'),
+                table_number: formData.get('table_number'),
+                payment_method: formData.get('payment_method'),
+                notes: formData.get('notes')
+            };
+            
+            try {
+                const result = await APIService.createOrder(orderData);
+                if (result.success) {
+                    Utils.showToast('Order placed successfully!', 'success');
+                    cart = [];
+                    updateCart();
+                    closeCheckout();
+                    toggleCart();
+                    
+                    showOrderConfirmation(result.order_id);
+                } else {
+                    Utils.showToast(result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Failed to place order:', error);
+                Utils.showToast('Failed to place order. Please try again.', 'error');
+            }
+        }
+
+        function showOrderConfirmation(orderId) {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content" style="text-align: center;">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Order Confirmed!</h3>
+                        <button class="close-btn" onclick="this.closest('.modal').remove()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p style="margin-bottom: 1rem;">
+                            <svg width="64" height="64" fill="#10b981" viewBox="0 0 24 24">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                            </svg>
+                        </p>
+                        <h4 style="margin-bottom: 1rem;">Thank you for your order!</h4>
+                        <p style="margin-bottom: 1rem;">Your Order ID is: <strong>#${orderId}</strong></p>
+                        <p style="color: #6b7280;">Your order has been received and is being prepared.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="this.closest('.modal').remove()">OK</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        function searchMenu() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const allItems = [];
+            menuData.forEach(category => allItems.push(...category.items));
+
+            const filteredItems = allItems.filter(item => 
+                item.name.toLowerCase().includes(query) ||
+                (item.description && item.description.toLowerCase().includes(query))
+            );
+
+            const container = document.getElementById('menuGrid');
+            container.innerHTML = '';
+            if (filteredItems.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6b7280; grid-column: 1/-1;">No items found matching your search.</p>';
+                return;
+            }
+            filteredItems.forEach(item => {
+                const itemCard = createMenuItemCard(item);
+                container.appendChild(itemCard);
+            });
+        }
+
+        function showError(message) {
+            const container = document.getElementById('menuGrid');
+            container.innerHTML = `<p style="text-align: center; color: #ef4444; grid-column: 1/-1;">${message}</p>`;
+        }
+    </script>
+</body>
+</html>
